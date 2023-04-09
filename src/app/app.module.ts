@@ -1,24 +1,33 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
 import { AppRoutingModule } from './app-routing.module';
 
 // NG Translate
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { HomeModule } from './home/home.module';
-import { DetailModule } from './detail/detail.module';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouteReuseStrategy } from '@angular/router';
+import { JwtModule } from '@auth0/angular-jwt';
 import { AppComponent } from './app.component';
+import { ErrorInterceptor } from './core/interceptor/error.interceptor';
+import { CustomRouterReuseStrategy } from './custom-router-reuse.strategy';
+import NotFoundComponent from './modules/not-found/not-found.component';
+import { ModalComponent } from './shared/components/modal/modal.component';
+
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
+export function tokenGetter(): any {
+  return localStorage.getItem('token');
+}
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -27,8 +36,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     HttpClientModule,
     CoreModule,
     SharedModule,
-    HomeModule,
-    DetailModule,
     AppRoutingModule,
     TranslateModule.forRoot({
       loader: {
@@ -36,9 +43,23 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
         useFactory: httpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+      },
+    }),
+    BrowserAnimationsModule,
+    ModalComponent,
+    NotFoundComponent
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    {
+    provide: RouteReuseStrategy,
+    useClass: CustomRouterReuseStrategy,
+  }
+],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -21,15 +21,5 @@ module.exports = (config, options) => {
         }
     }
 
-    config.plugins = [
-        ...config.plugins,
-        new NodePolyfillPlugin({
-			  excludeAliases: ["console"]
-		})
-    ];
-
-    // https://github.com/ryanclark/karma-webpack/issues/497
-    config.output.globalObject = 'globalThis';
-
     return config;
 }

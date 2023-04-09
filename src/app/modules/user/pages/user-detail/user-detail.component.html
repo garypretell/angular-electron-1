@@ -1,0 +1,396 @@
+<div class="contenedor mx-3">
+  <div class="tabla">
+    <app-management-observable [obs]="folderList$ | async" [err]="folderListError$ | async"
+      [obsTemplate]="folderListTmpl" [obsErrTemplate]="folderErrListTmpl">
+      <ng-template #folderListTmpl let-data>
+        <h3 class="m-3">LISTADO DE DGS</h3>
+        <div class="pb-4 dark:bg-gray-900 flex justify-between">
+          <app-filter-chip-list [filtros]="filtros" (action)="remove($event)"></app-filter-chip-list>
+        </div>
+        <div class="mr-2">
+          <app-table [cols]="cols" [data]="data" [length]="length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+            (onAction)="onActionHandler($event)" (pageAction)="handlePageEvent($event)"></app-table>
+        </div>
+      </ng-template>
+    </app-management-observable>
+  </div>
+  <div class="filtro md:mt-3">
+    <div
+      class="w-full  p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+      <form class="space-y-3" [formGroup]="searchDgsForm.baseForm">
+        <h5 class="text-xl font-medium text-gray-900 dark:text-white">Filtrar Dgs</h5>
+        <div>
+          <label for="nombre" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
+          <input type="text" name="nombre" id="nombre" placeholder="Nombre" formControlName="nombre"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            required>
+        </div>
+        <div>
+          <label for="fecha_carga_desde" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Fecha
+            Carga desde</label>
+          <input formControlName="fecha_carga_desde" id="fecha_carga_desde" datepicker datepicker-format="yyyy/MM/dd"
+            type="date"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Select date">
+        </div>
+        <div>
+          <label for="fecha_carga_hasta" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Fecha
+            Carga hasta</label>
+          <input formControlName="fecha_carga_hasta" id="fecha_carga_hasta" datepicker datepicker-format="yyyy/MM/dd"
+            type="date"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Select date">
+        </div>
+        <div>
+          <label for="fecha_cambio_desde" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Fecha
+            Cambio desde</label>
+          <input formControlName="fecha_cambio_desde" id="fecha_cambio_desde" datepicker datepicker-format="yyyy/MM/dd"
+            type="date"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Select date">
+        </div>
+        <div>
+          <label for="fecha_cambio_hasta" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Fecha
+            Cambio hasta</label>
+          <input formControlName="fecha_cambio_hasta" id="fecha_cambio_hasta" datepicker datepicker-format="yyyy/MM/dd"
+            type="date"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Select date">
+        </div>
+        <div>
+          <label for="estado" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Estado</label>
+          <select formControlName="estado" id="estado"
+            class="block w-full rounded-lg border border-gray-300 py-3 px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500">
+            <option value="">Todos</option>
+            <option *ngFor="let estado of statusDgs" [ngValue]="estado">{{ estado.display }}</option>
+          </select>
+        </div>
+
+        <div class="relative max-w-sm">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <!-- <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg> -->
+          </div>
+        </div>
+
+        <button type="submit" (click)="filtrar()"
+          class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+<ng-template #folderErrListTmpl let-error>
+  {{ error | json }}
+</ng-template>
+
+
+<div *ngIf="showModal"
+  class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex p-4  md:inset-0 h-[calc(100%-1rem)] md:h-full">
+  <div class="relative w-auto my-3 mx-auto max-w-6xl">
+    <!--content-->
+    <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+      <!--header-->
+      <div class="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+        <h5 class="font-semibold">
+          Editar Carpeta ({{dgs?.dgs}})
+        </h5>
+        <button (click)="toggleModal(false)" type="button"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          data-modal-hide="large-modal">
+          <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      <!--body-->
+      <div class="relative p-3">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+          <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="flex flex-row flex-wrap gap-10">
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Carpeta
+                </label>
+                <p class="text-xs italic">{{dgs?.dgs}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Total Imagenes
+                </label>
+                <p class="text-xs italic">{{dgs?.totalImage}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Total Imagenes Ok
+                </label>
+                <p class="text-xs italic">{{dgs?.totalImageOk}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Total Imagenes Error
+                </label>
+                <p class="text-xs italic">{{dgs?.totalImageErr}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Fecha Carga
+                </label>
+                <p class="text-xs italic">{{dgs?.date_load | date: 'yyyy-MM-dd'}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Fecha Cambio
+                </label>
+                <p class="text-xs italic">{{dgs?.date_process | date: 'yyyy-MM-dd'}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Estado
+                </label>
+                <p class="text-xs italic">{{dgs?.status | status}}</p>
+              </div>
+              <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Carpeta Origen
+                </label>
+                <p class="text-xs italic">{{dgs?.fsFolderName}}</p>
+              </div>
+              <div *ngIf="dgs?.status !== 'E'"><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Carpeta Destino
+                </label>
+                  <p class="text-xs italic">{{dgs?.archiveFolderName}}</p>
+              </div>
+              <div *ngIf="dgs?.status === 'E'">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Carpeta Destino
+                </label>
+                <input type="text" title="Carpeta Destino" [(ngModel)]="dgs.archiveFolderName">
+              </div>
+            </div>
+          </form>
+          <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+            <li class="mr-2">
+              <a (click)="toggleTabs(1)" class="inline-flex p-4"
+                [ngClass]="openTab === 1 ? 'text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500 group active' : 'border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group'">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2"
+                  [ngClass]="openTab === 1 ? 'text-blue-600 dark:text-blue-500' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300'"
+                  fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                  </path>
+                </svg>Datos 1
+              </a>
+            </li>
+            <li class="mr-2">
+              <a (click)="toggleTabs(2)" class="inline-flex p-4"
+                [ngClass]="openTab === 2 ? 'text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500 group active' : 'border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group'">
+                <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor"
+                  [ngClass]="openTab === 2 ? 'text-blue-600 dark:text-blue-500' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300'"
+                  viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                  </path>
+                </svg>Datos 2
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="relative overflow-y-auto min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded mt-3" style="max-height: 300px !important">
+          <div class="px-4 py-5 flex-auto">
+            <div class="tab-content tab-space">
+              <div [ngClass]="{'hidden': openTab !== 1, 'block': openTab === 1}">
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    uad
+                    </label>
+                    <p class="text-xs italic">{{dgs?.uad}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    title
+                    </label>
+                    <p class="text-xs italic">{{dgs?.title}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    recordTitle
+                    </label>
+                    <p class="text-xs italic">{{dgs?.recordTitle}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    place
+                    </label>
+                    <p class="text-xs italic">{{dgs?.place}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    placeTerm
+                    </label>
+                    <p class="text-xs italic">{{dgs?.placeTerm}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    Localidad
+                    </label>
+                    <p class="text-xs italic">{{dgs?.locality}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    volumenId
+                    </label>
+                    <p class="text-xs italic">{{dgs?.volumenId}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    archiveReferenceNumber
+                    </label>
+                    <p class="text-xs italic">{{dgs?.archiveReferenceNumber}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    volumeDesignation
+                    </label>
+                    <p class="text-xs italic">{{dgs?.volumeDesignation}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    archiveReferenceNumber1
+                    </label>
+                    <p class="text-xs italic">{{dgs?.archiveReferenceNumber1}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    publisher
+                    </label>
+                    <p class="text-xs italic">{{dgs?.publisher}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    recordCreatorAutor
+                    </label>
+                    <p class="text-xs italic">{{dgs?.recordCreatorAutor}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    cvRecordType1ad
+                    </label>
+                    <p class="text-xs italic">{{dgs?.cvRecordType1}}</p>
+                  </div>
+                </div>
+              </div>
+              <div [ngClass]="{'hidden': openTab !== 2, 'block': openTab === 2}">   
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    recordDates
+                    </label>
+                    <p class="text-xs italic">{{dgs?.recordDates}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    recordDatesStandard
+                    </label>
+                    <p class="text-xs italic">{{dgs?.recordDatesStandard}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    dateRange
+                    </label>
+                    <p class="text-xs italic">{{dgs?.dateRange}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    languageTerm
+                    </label>
+                    <p class="text-xs italic">{{dgs?.languageTerm}}</p>
+                  </div>
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    primaryLanguage
+                    </label>
+                    <p class="text-xs italic">{{dgs?.primaryLanguage}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    language
+                    </label>
+                    <p class="text-xs italic">{{dgs?.language}}</p>
+                  </div>
+                
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    physicalDescription
+                    </label>
+                    <p class="text-xs italic">{{dgs?.physicalDescription}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    recordTypeDescription
+                    </label>
+                    <p class="text-xs italic">{{dgs?.recordTypeDescription}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    notes
+                    </label>
+                    <p class="text-xs italic">{{dgs?.notes}}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 mb-4">
+                  <div><label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    comment
+                    </label>
+                    <p class="text-xs italic">{{dgs?.comment}}</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--footer-->
+      <div class="flex items-center justify-end p-2 border-t border-solid border-slate-200 rounded-b">
+        <button
+          class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+          type="button" (click)="toggleModal(false)">
+          Cerrar
+        </button>
+        <button *ngIf="dgs?.status === 'E'"
+          class="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+          type="button" (click)="updateDgs(dgs)">
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showModal" class="opacity-25 fixed inset-0 z-40 bg-black"></div>
+
+<app-modal-button>
+  <div svgIcon>
+    <ng-container>
+      <svg aria-hidden="true" class="mx-auto mb-4 text-red-600 w-14 h-14 dark:text-gray-200" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    </ng-container>
+  </div>
+  <div buttons>
+    <button data-modal-hide="popup-modal" type="button" (click)="eliminar()"
+      class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+      Si, Eliminar
+    </button>
+
+    <button data-modal-hide="popup-modal" type="button" (click)="cancelar()"
+      class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No,
+      Cancelar</button>
+  </div>
+</app-modal-button>

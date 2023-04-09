@@ -1,0 +1,68 @@
+<ng-container *ngIf="dataSource.length > 0, else withOutData">
+  <table [ngStyle]="{'width': '100% !important'}" mat-table [dataSource]="dataSource">
+    <ng-container *ngFor="let col of tableCols; let i = index" [matColumnDef]="col.key">
+      <th [ngStyle]="{'font-weight': 'bold'}" mat-header-cell *matHeaderCellDef>{{ tableCols[i]["display"] }}</th>
+      <td mat-cell *matCellDef="let element">
+        <!-- Checking if it's a normal column or column with specific config -->
+        <ng-container *ngIf="!col.config; else hasConfig">
+          {{ element[col.key] }}
+        </ng-container>
+        <!-- If this column has a config object so we will display depending
+        on our setted config -->
+        <ng-template #hasConfig>
+          <ng-container *ngIf="col.config.isNumber">
+            {{ element[col.key] | number : col.config.format }}
+          </ng-container>
+
+          <ng-container *ngIf="col.config.isDynamicPipe">
+            {{ element[col.key] | dynamicPipe: col.config.myPipe }}
+          </ng-container>
+          <!-- if this attribute is a boolean, we will show values from config
+          object depending on his state -->
+          <ng-container *ngIf="col.config.isBoolean">
+            {{ element | isBooleanCell : col }}
+          </ng-container>
+          <!-- if this attribute is a date, we will format it depending on format
+            value in config object -->
+          <ng-container *ngIf="col.config.isDate">
+            {{ element[col.key] | date: col.config.format }}
+          </ng-container>
+          <!-- if this column is action, we will loop through each action and show
+            it as a mat-button -->
+          <ng-container *ngIf="col.config.isAction">
+            <ng-container *ngFor="let action of col.config.actions">
+              <ng-container *ngIf="action.isSvg; else isButton" >
+                  <button matTooltip="{{ action.title }}" type="button" (click)="emitter.emit({action, element})" class="font-bold py-2 px-2 rounded inline-flex items-center" [ngClass]="action.styles">
+                  <i class="{{action.classIcon}}"></i>
+                  </button>
+              </ng-container>
+              <ng-template #isButton>
+                <button [ngClass]="action.styles" 
+                  (click)="emitter.emit({action, element})" mat-button>
+                  {{ action.title }}
+                </button>
+              </ng-template>
+              
+            </ng-container>
+            
+          </ng-container>
+        </ng-template>
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="keys"></tr>
+    <tr mat-row *matRowDef="let row; columns: keys"></tr>
+  </table>
+  <hr>
+    <mat-paginator *ngIf="isVisiblePagination" (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+    [disabled]="false" [showFirstLastButtons]="true" [hidePageSize]="true" [pageIndex]="pageIndex">
+  </mat-paginator>
+
+</ng-container>
+<ng-template #withOutData>
+  <div class="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3 rounded" role="alert">
+    <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z"/></svg>
+    <p>{{messageNotFound.message}}</p>
+  </div>
+</ng-template>
+
