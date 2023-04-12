@@ -4,6 +4,10 @@
   "main": "main.js",
   "private": true,
   "devDependencies": {
+    
+  },
+  "dependencies": {
+    "ngrok": "^4.3.3",
     "@electron/remote": "^2.0.9"
   }
 }

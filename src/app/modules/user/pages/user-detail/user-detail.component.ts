@@ -60,7 +60,7 @@ export class UserDetailComponent implements OnDestroy, OnInit {
 
   tabManager = inject(TabManagerService);
   id = this.route.snapshot.paramMap.get('id');
-  filtroData: any = { donorId: this.id };
+  filtroData: any = { donorId: +this.id };
   datePipe = inject(DatePipe);
   user = this.route.snapshot.data.userData;
   dgs: any = {};
@@ -96,7 +96,7 @@ export class UserDetailComponent implements OnDestroy, OnInit {
     this.showModal = !this.showModal;
     if (this.showModal) {
       this.dgsService
-      .selectDgsOid({ oidDgs: dgs.oidDgs })
+      .selectDgsOid({ oidDgs: dgs.oid_dgs })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data: any) => {
         this.dgs = data;
@@ -143,7 +143,7 @@ export class UserDetailComponent implements OnDestroy, OnInit {
   eliminar() {
     const state = DGS_STATUS.find(f => f.key === 'A');
     const params: any = {
-      oidDgs: this.dgsData.oidDgs,
+      oidDgs: this.dgsData.oid_dgs,
       estado: state.key
     };
     this.dgsService
@@ -247,7 +247,7 @@ export class UserDetailComponent implements OnDestroy, OnInit {
 
   updateDgs(dgs: any) {
     const params: any = {
-      oidDgs: this.dgsData.oidDgs,
+      oidDgs: this.dgsData.oid_dgs,
       carpeta_destino: dgs.archiveFolderName,
       estado: 'X'
     };
@@ -279,7 +279,7 @@ export class UserDetailComponent implements OnDestroy, OnInit {
   private addOrUpdateSelfTab(): void {
     this.tabManager.addOrUpdate({
       url: this.router.url,
-      title: `${this.userCopy.donorName} (${this.userCopy.oidDonor})`,
+      title: `${this.userCopy.donor_name} (${this.userCopy.oid_donor})`,
       dirty$: of(false),
     });
   }

@@ -102,7 +102,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   getDetail(donor: any) {
-    this.router.navigate([`${PATH_URL_DATA.urlUserDetail}/${donor.oidDonor}`]);
+    this.router.navigate([`${PATH_URL_DATA.urlUserDetail}/${donor.oid_donor}`]);
   }
 
   openDialog() {
@@ -262,6 +262,7 @@ export class UserListComponent implements OnInit, OnDestroy {
           MODAL_ALERT.show = true;
           MODAL_ALERT.check = true;
           this.modalService.modalData = MODAL_ALERT;
+          this.filtrar();
         },
         error: (error) => {
           this.showLoading = false;
@@ -278,7 +279,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   eliminar() {
     const state = DGS_STATUS.find(f => f.key === 'A');
     const params: any = {
-      donorId: +this.donor.oidDonor,
+      donorId: +this.donor.oid_donor,
       estado: state.key
     };
     this.donorService
@@ -302,7 +303,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   process() {
     const body: IProcessBody = {
-      id: +this.donor.oidDonor,
+      id: +this.donor.oid_donor,
       parallel: NUM_THREADS,
     };
     this.etlService
@@ -326,7 +327,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   reprocess() {
     const body: IProcessBody = {
-      id: +this.donor.oidDonor,
+      id: +this.donor.oid_donor,
       parallel: NUM_THREADS,
     };
     this.etlService

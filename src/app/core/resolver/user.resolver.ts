@@ -10,7 +10,7 @@ export const userResolver: ResolveFn<boolean> = (route, state) => {
   const router = inject(Router);
   const id = route.params.id;
 
-  return donorService.getDonorById({donorId: id}).pipe(
+  return donorService.getDonorById({donorId: +id}).pipe(
     map((data: any) => data),
     catchError((error) => {
       router.navigate([PATH_URL_DATA.urlUserList], { replaceUrl: true });

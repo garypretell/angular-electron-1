@@ -42,25 +42,25 @@ export const PATH_ETL_SERVICE: any = {
 };
 
 export const DONOR_TABLE: ITableColumn[] = [
-  { key: 'donorName', display: 'Nombre' },
-  { key: 'totalDgs', display: 'Total Carpetas', config: {
+  { key: 'donor_name', display: 'Nombre' },
+  { key: 'total_dgs', display: 'Total Carpetas', config: {
     isNumber: true,
     format: '0.0-0'
   } },
-  { key: 'totalDgsOk', display: 'Total Carp. Ok', config: {
+  { key: 'total_dgs_ok', display: 'Total Carp. Ok', config: {
     isNumber: true,
     format: '0.0-0'
   } },
-  { key: 'totalDgsErr', display: 'Total Carp. Error', config: {
+  { key: 'total_dgs_err', display: 'Total Carp. Error', config: {
     isNumber: true,
     format: '0.0-0'
   } },
-  { key: 'totalImage', display: 'Total Imágenes', config: {
+  { key: 'total_image', display: 'Total Imágenes', config: {
     isNumber: true,
     format: '0.0-0'
   } },
   {
-    key: 'dateLoad',
+    key: 'date_load',
     display: 'Fecha Carga',
     config: {
       isDate: true,
@@ -68,7 +68,7 @@ export const DONOR_TABLE: ITableColumn[] = [
     }
   },
   {
-    key: 'dateProcess',
+    key: 'date_process',
     display: 'Fecha Cambio',
     config: {
       isDate: true,

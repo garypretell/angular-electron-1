@@ -17,6 +17,9 @@
       "dom"
     ]
   },
+  "angularCompilerOptions": {
+    "enableIvy": false
+  },
   "files": [
     "app/main.ts"
   ],

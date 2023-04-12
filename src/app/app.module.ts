@@ -17,6 +17,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AppComponent } from './app.component';
 import { ErrorInterceptor } from './core/interceptor/error.interceptor';
+import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { CustomRouterReuseStrategy } from './custom-router-reuse.strategy';
 import NotFoundComponent from './modules/not-found/not-found.component';
 import { ModalComponent } from './shared/components/modal/modal.component';
@@ -55,6 +56,11 @@ export function tokenGetter(): any {
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
     {
     provide: RouteReuseStrategy,
     useClass: CustomRouterReuseStrategy,

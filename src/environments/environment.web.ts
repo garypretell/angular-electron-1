@@ -1,5 +1,6 @@
 export const APP_CONFIG = {
   production: false,
   environment: 'WEB',
-  urlService:'/proxy/'
+  urlService: 'https://etlsubdomain.serveo.net/',
+  // urlService:'/proxy/'
 };

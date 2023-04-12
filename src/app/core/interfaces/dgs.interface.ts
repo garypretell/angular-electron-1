@@ -33,8 +33,8 @@ export interface IDgsResponse {
   languageTerm: string;
   locality: string;
   notes: string;
-  oidDgs: string;
-  oidDonor: number;
+  oid_dgs: string;
+  oid_donor: number;
   physicalDescription: string;
   place: string;
   placeTerm: string;

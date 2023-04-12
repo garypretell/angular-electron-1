@@ -1,13 +1,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "module": "es2022",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "allowJs": true,
     "target": "ES2022",
@@ -23,17 +23,17 @@
     ],
     "useDefineForClassFields": false
   },
+  "angularCompilerOptions": {
+    "enableIvy": false
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ],
   "exclude": [
     "node_modules"
-  ],
-  "angularCompilerOptions": {
-    "strictTemplates": true,
-    "fullTemplateTypeCheck": true,
-    "annotateForClosureCompiler": true,
-    "strictInjectionParameters": true,
-    "skipTemplateCodegen": false,
-    "preserveWhitespaces": true,
-    "skipMetadataEmit": false,
-    "disableTypeScriptVersionCheck": true
-  }
+  ]
 }

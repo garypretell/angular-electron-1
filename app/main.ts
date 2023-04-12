@@ -1,15 +1,19 @@
-import {app, BrowserWindow, screen} from 'electron';
+import {app, BrowserWindow, screen, protocol } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as url from 'url';
+
+app.whenReady().then(() => {
+  protocol.registerFileProtocol('file', (request, callback) => {
+    const pathname = decodeURI(request.url.replace('file:///', ''));
+    callback(pathname);
+  });
+});
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
 
 import { ExtendedWebPreferences } from './extended-web-preferences';
-
-
-
-
 
 let win: BrowserWindow = null;
 
@@ -28,9 +32,12 @@ function createWindow(): BrowserWindow {
     height: size.height,
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve),
+      allowRunningInsecureContent: true,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
-      enableRemoteModule : true
+      enableRemoteModule : true,
+      plugins: true,
+      webSecurity: false,
+      nativeWindowOpen: true
     } as ExtendedWebPreferences
   });
 
@@ -40,10 +47,10 @@ function createWindow(): BrowserWindow {
   require("@electron/remote/main").enable(webContents);
 
   if (serve) {
-    const debug = require('electron-debug');
-    debug();
-
-    require('electron-reloader')(module);
+    win.webContents.openDevTools();
+    require('electron-reload')(__dirname, {
+      electron: require(path.join(__dirname, '/../node_modules/electron'))
+    });
     win.loadURL('http://localhost:4200');
   } else {
     // Path when running electron executable
@@ -54,8 +61,11 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    const url = new URL(path.join('file:', __dirname, pathIndex));
-    win.loadURL(url.href);
+    win.loadURL(url.format({
+      pathname: path.join(__dirname, pathIndex),
+      protocol: 'file:',
+      slashes: true
+    }));
   }
 
   // Emitted when the window is closed.
